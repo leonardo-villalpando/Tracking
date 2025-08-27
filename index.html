@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Tracking System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .user-info {
+            font-size: 0.9rem;
+            background: rgba(255,255,255,0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+        }
+
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .controls-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .control-group h3 {
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.3s ease;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .btn:hover {
+            background: #5a6fd8;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-success {
+            background: #28a745;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .file-input {
+            margin-bottom: 1rem;
+        }
+
+        .file-input input[type="file"] {
+            margin-bottom: 0.5rem;
+        }
+
+        .search-container {
+            margin-bottom: 1rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .tab-nav {
+            display: flex;
+            background: white;
+            border-radius: 10px 10px 0 0;
+            overflow: hidden;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 1rem;
+            background: #f8f9fa;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .tab-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .tab-btn:hover:not(.active) {
+            background: #e9ecef;
+        }
+
+        .tab-content {
+            background: white;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            min-height: 500px;
+        }
+
+        .tab-panel {
+            display: none;
+            padding: 1.5rem;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .patient-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        .patient-table th {
+            background: #f8f9fa;
+            padding: 0.75rem 0.5rem;
+            text-align: left;
+            border-bottom: 2px solid #dee2e6;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .patient-table td {
+            padding: 0.75rem 0.5rem;
+            border-bottom: 1px solid #dee2e6;
+            vertical-align: middle;
+        }
+
+        .patient-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .status-dot.called { background: #28a745; }
+        .status-dot.not-called { background: #6c757d; }
+        .status-dot.scheduled { background: #007bff; }
+        .status-dot.declined { background: #ffc107; }
+        .status-dot.no-answer { background: #dc3545; }
+
+        .action-btn {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            border: 1px solid #ccc;
+            background: white;
+            color: #667eea;
+            cursor: pointer;
+            border-radius: 3px;
+            margin-right: 0.25rem;
+        }
+
+        .action-btn:hover {
+            background: #f8f9fa;
+        }
+
+        .checkbox-input {
+            cursor: pointer;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: black;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        .form-group textarea {
+            height: 80px;
+            resize: vertical;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
+
+        .alert {
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .controls-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .patient-table {
+                font-size: 0.75rem;
+            }
+
+            .patient-table th,
+            .patient-table td {
+                padding: 0.5rem 0.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Patient Tracking System</h1>
+        <div class="header-controls">
+            <div class="user-info">
+                Users Online: <span id="userCount">-</span>
+            </div>
+            <a href="/logout" class="logout-btn">Logout</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="totalPatients">-</div>
+                <div class="stat-label">Total Patients</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="calledPatients">-</div>
+                <div class="stat-label">Patients Called</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="scheduledAppointments">-</div>
+                <div class="stat-label">Appointments Scheduled</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="successRate">-</div>
+                <div class="stat-label">Success Rate</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="followUpsNeeded">-</div>
+                <div class="stat-label">Follow-ups Needed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="noAnswer">-</div>
+                <div class="stat-label">No Answer</div>
+            </div>
+        </div>
+
+        <div class="controls-section">
+            <div class="controls-grid">
+                <div class="control-group">
+                    <h3>CSV Upload</h3>
+                    <div class="file-input">
+                        <input type="file" id="csvFile" accept=".csv" />
+                        <button class="btn" onclick="uploadCSV()">Upload CSV</button>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <h3>Data Export</h3>
+                    <button class="btn btn-success" onclick="exportCSV()">Export to CSV</button>
+                    <button class="btn btn-secondary" onclick="refreshData()">Refresh Data</button>
+                </div>
+                <div class="control-group">
+                    <h3>Search Patients</h3>
+                    <div class="search-container">
+                        <input type="text" class="search-input" id="searchInput" placeholder="Search by name, phone, or account number..." />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-nav">
+            <button class="tab-btn active" onclick="switchTab('master')">Master List</button>
+            <button class="tab-btn" onclick="switchTab('called')">Called Patients</button>
+            <button class="tab-btn" onclick="switchTab('scheduled')">Scheduled Appointments</button>
+            <button class="tab-btn" onclick="switchTab('followup')">Follow-ups Needed</button>
+        </div>
+
+        <div class="tab-content">
+            <div id="master-tab" class="tab-panel active">
+                <div class="table-container">
+                    <table class="patient-table">
+                        <thead>
+                            <tr>
+                                <th>Patient Name</th>
+                                <th>DOB</th>
+                                <th>Age</th>
+                                <th>Phone</th>
+                                <th>Called</th>
+                                <th>Contact Status</th>
+                                <th>Appt Scheduled</th>
+                                <th>Staff</th>
+                                <th>Notes</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="masterTableBody">
+                            <tr><td colspan="10" class="loading">Loading patients...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="called-tab" class="tab-panel">
+                <div class="table-container">
+                    <table class="patient-table">
+                        <thead>
+                            <tr>
+                                <th>Patient Name</th>
+                                <th>Phone</th>
+                                <th>Call Date</th>
+                                <th>Call Time</th>
+                                <th>Contact Status</th>
+                                <th>Staff</th>
+                                <th>Notes</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="calledTableBody">
+                            <tr><td colspan="8" class="loading">Loading called patients...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="scheduled-tab" class="tab-panel">
+                <div class="table-container">
+                    <table class="patient-table">
+                        <thead>
+                            <tr>
+                                <th>Patient Name</th>
+                                <th>Phone</th>
+                                <th>Appointment Date</th>
+                                <th>Appointment Time</th>
+                                <th>Staff</th>
+                                <th>Notes</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="scheduledTableBody">
+                            <tr><td colspan="7" class="loading">Loading scheduled appointments...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="followup-tab" class="tab-panel">
+                <div class="table-container">
+                    <table class="patient-table">
+                        <thead>
+                            <tr>
+                                <th>Patient Name</th>
+                                <th>Phone</th>
+                                <th>Contact Status</th>
+                                <th>Follow-up Date</th>
+                                <th>Staff</th>
+                                <th>Notes</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="followupTableBody">
+                            <tr><td colspan="7" class="loading">Loading follow-ups...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Patient Information</h3>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <form id="editForm">
+                <input type="hidden" id="editIndex" />
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Called:</label>
+                        <input type="checkbox" id="editCalled" class="checkbox-input" onchange="toggleCallFields()" />
+                    </div>
+                    <div class="form-group">
+                        <label>Appointment Scheduled:</label>
+                        <input type="checkbox" id="editAppointmentScheduled" class="checkbox-input" onchange="toggleAppointmentFields()" />
+                    </div>
+                </div>
+
+                <div class="form-row" id="callFields">
+                    <div class="form-group">
+                        <label>Call Date:</label>
+                        <input type="date" id="editCallDate" />
+                    </div>
+                    <div class="form-group">
+                        <label>Call Time:</label>
+                        <input type="time" id="editCallTime" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Contact Status:</label>
+                    <select id="editContactStatus">
+                        <option value="">Select Status</option>
+                        <option value="Answered">Answered</option>
+                        <option value="No Answer">No Answer</option>
+                        <option value="Busy">Busy</option>
+                        <option value="Voicemail">Voicemail</option>
+                        <option value="Invalid Number">Invalid Number</option>
+                    </select>
+                </div>
+
+                <div class="form-row" id="appointmentFields">
+                    <div class="form-group">
+                        <label>Appointment Date:</label>
+                        <input type="date" id="editAppointmentDate" />
+                    </div>
+                    <div class="form-group">
+                        <label>Appointment Time:</label>
+                        <input type="time" id="editAppointmentTime" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Declined Reason:</label>
+                    <input type="text" id="editDeclinedReason" placeholder="If appointment was declined..." />
+                </div>
+
+                <div class="form-group">
+                    <label>Staff Member:</label>
+                    <input type="text" id="editStaffMember" placeholder="Your name" />
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Follow-up Needed:</label>
+                        <input type="checkbox" id="editFollowUpNeeded" class="checkbox-input" onchange="toggleFollowUpFields()" />
+                    </div>
+                    <div class="form-group" id="followUpDateField">
+                        <label>Follow-up Date:</label>
+                        <input type="date" id="editFollowUpDate" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Notes:</label>
+                    <textarea id="editNotes" placeholder="Additional notes..."></textarea>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script>
+        // Global variables
+        let patientsData = [];
+        let currentTab = 'master';
+        let socket = io();
+        
+        // Socket.IO event handlers
+        socket.on('connect', function() {
+            console.log('Connected to server');
+        });
+
+        socket.on('data_updated', function(data) {
+            patientsData = data.patients;
+            renderAllTables();
+            updateStatistics();
+        });
+
+        socket.on('user_count', function(data) {
+            document.getElementById('userCount').textContent = data.count;
+        });
+
+        // Initialize application
+        document.addEventListener('DOMContentLoaded', function() {
+            loadPatients();
+            updateStatistics();
+            setupEventListeners();
+            setInterval(updateStatistics, 30000); // Update stats every 30 seconds
+        });
+
+        function setupEventListeners() {
+            document.getElementById('searchInput').addEventListener('input', function() {
+                renderAllTables();
+            });
+
+            document.getElementById('editForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveEdit();
+            });
+        }
+
+        async function loadPatients() {
+            try {
+                const response = await fetch('/api/patients');
+                if (response.ok) {
+                    patientsData = await response.json();
+                    renderAllTables();
+                } else {
+                    showAlert('Failed to load patients', 'error');
+                }
+            } catch (error) {
+                console.error('Error loading patients:', error);
+                showAlert('Error loading patients', 'error');
+            }
+        }
+
+        async function savePatients() {
+            try {
+                const response = await fetch('/api/patients', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(patientsData)
+                });
+
+                if (response.ok) {
+                    showAlert('Data saved successfully', 'success');
+                } else {
+                    showAlert('Failed to save data', 'error');
+                }
+            } catch (error) {
+                console.error('Error saving patients:', error);
+                showAlert('Error saving data', 'error');
+            }
+        }
+
+        function renderAllTables() {
+            renderMasterTable();
+            renderCalledTable();
+            renderScheduledTable();
+            renderFollowUpTable();
+        }
+
+        function filterPatients() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            if (!searchTerm) return patientsData;
+
+            return patientsData.filter(patient => 
+                patient.Patient_Name.toLowerCase().includes(searchTerm) ||
+                (patient.Tel_No && patient.Tel_No.includes(searchTerm)) ||
+                patient.Acc_No.includes(searchTerm)
+            );
+        }
+
+        function renderMasterTable() {
+            const tbody = document.getElementById('masterTableBody');
+            const filteredPatients = filterPatients();
+
+            if (filteredPatients.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="10" class="loading">No patients found</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = filteredPatients.map((patient, index) => {
+                const originalIndex = patientsData.indexOf(patient);
+                return `
+                    <tr>
+                        <td>${patient.Patient_Name}</td>
+                        <td>${patient.DOB}</td>
+                        <td>${patient.Age}</td>
+                        <td>${patient.Tel_No || 'N/A'}</td>
+                        <td>
+                            <div class="status-indicator">
+                                <span class="status-dot ${patient.Called ? 'called' : 'not-called'}"></span>
+                                <input type="checkbox" class="checkbox-input" ${patient.Called ? 'checked' : ''} 
+                                       onchange="toggleCalled(${originalIndex})">
+                            </div>
+                        </td>
+                        <td>${patient.Contact_Status || '-'}</td>
+                        <td>
+                            <div class="status-indicator">
+                                <span class="status-dot ${patient.Appointment_Scheduled ? 'scheduled' : 'not-called'}"></span>
+                                <input type="checkbox" class="checkbox-input" ${patient.Appointment_Scheduled ? 'checked' : ''} 
+                                       onchange="toggleAppointment(${originalIndex})">
+                            </div>
+                        </td>
+                        <td>${patient.Staff_Member || '-'}</td>
+                        <td title="${patient.Notes}">${patient.Notes ? patient.Notes.substring(0, 30) + '...' : '-'}</td>
+                        <td>
+                            <button class="action-btn" onclick="openEditModal(${originalIndex})">Edit</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderCalledTable() {
+            const tbody = document.getElementById('calledTableBody');
+            const calledPatients = patientsData.filter(p => p.Called);
+
+            if (calledPatients.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="loading">No called patients</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = calledPatients.map(patient => {
+                const originalIndex = patientsData.indexOf(patient);
+                return `
+                    <tr>
+                        <td>${patient.Patient_Name}</td>
+                        <td>${patient.Tel_No || 'N/A'}</td>
+                        <td>${patient.Call_Date || '-'}</td>
+                        <td>${patient.Call_Time || '-'}</td>
+                        <td>
+                            <div class="status-indicator">
+                                <span class="status-dot ${getStatusDotClass(patient.Contact_Status)}"></span>
+                                ${patient.Contact_Status || '-'}
+                            </div>
+                        </td>
+                        <td>${patient.Staff_Member || '-'}</td>
+                        <td title="${patient.Notes}">${patient.Notes ? patient.Notes.substring(0, 30) + '...' : '-'}</td>
+                        <td>
+                            <button class="action-btn" onclick="openEditModal(${originalIndex})">Edit</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderScheduledTable() {
+            const tbody = document.getElementById('scheduledTableBody');
+            const scheduledPatients = patientsData.filter(p => p.Appointment_Scheduled);
+
+            if (scheduledPatients.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="loading">No scheduled appointments</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = scheduledPatients.map(patient => {
+                const originalIndex = patientsData.indexOf(patient);
+                return `
+                    <tr>
+                        <td>${patient.Patient_Name}</td>
+                        <td>${patient.Tel_No || 'N/A'}</td>
+                        <td>${patient.Appointment_Date || '-'}</td>
+                        <td>${patient.Appointment_Time || '-'}</td>
+                        <td>${patient.Staff_Member || '-'}</td>
+                        <td title="${patient.Notes}">${patient.Notes ? patient.Notes.substring(0, 30) + '...' : '-'}</td>
+                        <td>
+                            <button class="action-btn" onclick="openEditModal(${originalIndex})">Edit</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderFollowUpTable() {
+            const tbody = document.getElementById('followupTableBody');
+            const followUpPatients = patientsData.filter(p => p.Follow_Up_Needed);
+
+            if (followUpPatients.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="loading">No follow-ups needed</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = followUpPatients.map(patient => {
+                const originalIndex = patientsData.indexOf(patient);
+                return `
+                    <tr>
+                        <td>${patient.Patient_Name}</td>
+                        <td>${patient.Tel_No || 'N/A'}</td>
+                        <td>
+                            <div class="status-indicator">
+                                <span class="status-dot ${getStatusDotClass(patient.Contact_Status)}"></span>
+                                ${patient.Contact_Status || '-'}
+                            </div>
+                        </td>
+                        <td>${patient.Follow_Up_Date || '-'}</td>
+                        <td>${patient.Staff_Member || '-'}</td>
+                        <td title="${patient.Notes}">${patient.Notes ? patient.Notes.substring(0, 30) + '...' : '-'}</td>
+                        <td>
+                            <button class="action-btn" onclick="openEditModal(${originalIndex})">Edit</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function getStatusDotClass(status) {
+            switch (status) {
+                case 'Answered': return 'called';
+                case 'No Answer': return 'no-answer';
+                case 'Voicemail': return 'declined';
+                case 'Busy': return 'declined';
+                default: return 'not-called';
+            }
+        }
+
+        function switchTab(tabName) {
+            currentTab = tabName;
+            
+            // Update tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update tab panels
+            document.querySelectorAll('.tab-panel').forEach(panel => {
+                panel.classList.remove('active');
+            });
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+        }
+
+        function toggleCalled(index) {
+            const patient = patientsData[index];
+            patient.Called = !patient.Called;
+            
+            if (patient.Called && !patient.Call_Date) {
+                const now = new Date();
+                patient.Call_Date = now.toISOString().split('T')[0];
+                patient.Call_Time = now.toTimeString().slice(0, 5);
+            } else if (!patient.Called) {
+                patient.Call_Date = '';
+                patient.Call_Time = '';
+                patient.Contact_Status = '';
+                patient.Staff_Member = '';
+            }
+            
+            savePatients();
+        }
+
+        function toggleAppointment(index) {
+            const patient = patientsData[index];
+            patient.Appointment_Scheduled = !patient.Appointment_Scheduled;
+            
+            if (!patient.Appointment_Scheduled) {
+                patient.Appointment_Date = '';
+                patient.Appointment_Time = '';
+            }
+            
+            savePatients();
+        }
+
+        function openEditModal(index) {
+            const patient = patientsData[index];
+            const modal = document.getElementById('editModal');
+            
+            document.getElementById('editIndex').value = index;
+            document.getElementById('editCalled').checked = patient.Called;
+            document.getElementById('editAppointmentScheduled').checked = patient.Appointment_Scheduled;
+            document.getElementById('editCallDate').value = patient.Call_Date;
+            document.getElementById('editCallTime').value = patient.Call_Time;
+            document.getElementById('editContactStatus').value = patient.Contact_Status;
+            document.getElementById('editAppointmentDate').value = patient.Appointment_Date;
+            document.getElementById('editAppointmentTime').value = patient.Appointment_Time;
+            document.getElementById('editDeclinedReason').value = patient.Declined_Reason;
+            document.getElementById('editStaffMember').value = patient.Staff_Member;
+            document.getElementById('editFollowUpNeeded').checked = patient.Follow_Up_Needed;
+            document.getElementById('editFollowUpDate').value = patient.Follow_Up_Date;
+            document.getElementById('editNotes').value = patient.Notes;
+            
+            toggleCallFields();
+            toggleAppointmentFields();
+            toggleFollowUpFields();
+            
+            modal.style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+
+        function toggleCallFields() {
+            const called = document.getElementById('editCalled').checked;
+            const callFields = document.getElementById('callFields');
+            callFields.style.display = called ? 'grid' : 'none';
+        }
+
+        function toggleAppointmentFields() {
+            const scheduled = document.getElementById('editAppointmentScheduled').checked;
+            const appointmentFields = document.getElementById('appointmentFields');
+            appointmentFields.style.display = scheduled ? 'grid' : 'none';
+        }
+
+        function toggleFollowUpFields() {
+            const followUp = document.getElementById('editFollowUpNeeded').checked;
+            const followUpField = document.getElementById('followUpDateField');
+            followUpField.style.display = followUp ? 'block' : 'none';
+        }
+
+        function saveEdit() {
+            const index = parseInt(document.getElementById('editIndex').value);
+            const patient = patientsData[index];
+            
+            patient.Called = document.getElementById('editCalled').checked;
+            patient.Appointment_Scheduled = document.getElementById('editAppointmentScheduled').checked;
+            patient.Call_Date = document.getElementById('editCallDate').value;
+            patient.Call_Time = document.getElementById('editCallTime').value;
+            patient.Contact_Status = document.getElementById('editContactStatus').value;
+            patient.Appointment_Date = document.getElementById('editAppointmentDate').value;
+            patient.Appointment_Time = document.getElementById('editAppointmentTime').value;
+            patient.Declined_Reason = document.getElementById('editDeclinedReason').value;
+            patient.Staff_Member = document.getElementById('editStaffMember').value;
+            patient.Follow_Up_Needed = document.getElementById('editFollowUpNeeded').checked;
+            patient.Follow_Up_Date = document.getElementById('editFollowUpDate').value;
+            patient.Notes = document.getElementById('editNotes').value;
+            
+            closeModal();
+            savePatients();
+        }
+
+        async function uploadCSV() {
+            const fileInput = document.getElementById('csvFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                showAlert('Please select a CSV file', 'error');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            try {
+                const response = await fetch('/api/upload_csv', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showAlert(result.message, 'success');
+                    loadPatients();
+                    fileInput.value = '';
+                } else {
+                    showAlert(result.error, 'error');
+                }
+            } catch (error) {
+                console.error('Error uploading CSV:', error);
+                showAlert('Error uploading file', 'error');
+            }
+        }
+
+        async function exportCSV() {
+            try {
+                const response = await fetch('/api/export_csv');
+                const result = await response.json();
+                
+                if (response.ok) {
+                    // Create download link
+                    const link = document.createElement('a');
+                    link.href = result.download_url;
+                    link.download = result.filename;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    
+                    showAlert('Export completed successfully', 'success');
+                } else {
+                    showAlert(result.error, 'error');
+                }
+            } catch (error) {
+                console.error('Error exporting CSV:', error);
+                showAlert('Error exporting data', 'error');
+            }
+        }
+
+        function refreshData() {
+            loadPatients();
+            updateStatistics();
+            showAlert('Data refreshed', 'success');
+        }
+
+        async function updateStatistics() {
+            try {
+                const response = await fetch('/api/stats');
+                if (response.ok) {
+                    const stats = await response.json();
+                    
+                    document.getElementById('totalPatients').textContent = stats.total_patients;
+                    document.getElementById('calledPatients').textContent = stats.called_patients;
+                    document.getElementById('scheduledAppointments').textContent = stats.scheduled_appointments;
+                    document.getElementById('successRate').textContent = stats.success_rate + '%';
+                    document.getElementById('followUpsNeeded').textContent = stats.follow_ups_needed;
+                    document.getElementById('noAnswer').textContent = stats.no_answer;
+                    document.getElementById('userCount').textContent = stats.active_users;
+                }
+            } catch (error) {
+                console.error('Error updating statistics:', error);
+            }
+        }
+
+        function showAlert(message, type) {
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            
+            const container = document.querySelector('.container');
+            container.insertBefore(alert, container.firstChild);
+            
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('editModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>
